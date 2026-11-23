@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dav</title>
+  <meta name="description" content="Dav — web, games, and bots. davlovescode-tech." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,520&family=Outfit:wght@360;500&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg:#050505; --fg:#f3efe6; --muted:#a39c90; --line:#2a2824; --panel:#10100e; --accent:#3dffa6; --wood:#6a3d22; --wood2:#3d2214; }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin:0; background:var(--bg); color:var(--fg); font-family:Outfit,system-ui,sans-serif; font-weight:360; }
+    a { color:inherit; }
+    button { font:inherit; color:inherit; background:none; border:0; cursor:pointer; }
+    .display { font-family:Fraunces,Georgia,serif; letter-spacing:-0.03em; }
+    nav.dock { position:fixed; top:16px; left:16px; z-index:5; display:flex; gap:14px; flex-wrap:wrap; padding:12px 16px; border:1px solid var(--line); border-radius:16px; background:rgba(16,16,14,.85); backdrop-filter:blur(8px); }
+    nav.dock a, nav.dock button { padding:4px 0; }
+    .hero { min-height:100svh; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; padding:140px 20px 64px; position:relative; overflow:hidden; }
+    .hero::before { content:""; position:absolute; inset:0; background:radial-gradient(ellipse at center, rgba(20,90,60,.45), transparent 58%); pointer-events:none; }
+    h1 { position:relative; font-size:clamp(2.6rem,7vw,4.5rem); line-height:.95; text-align:center; margin:0 0 36px; font-weight:520; }
+    .stage { position:relative; width:min(100%,720px); }
+    .row { display:flex; align-items:flex-end; justify-content:center; gap:28px; }
+    .crt { width:min(100%,420px); background:#1a1a18; border-radius:18px 18px 8px 8px; padding:14px; box-shadow:0 30px 80px rgba(0,0,0,.55); }
+    .screen { aspect-ratio:4/3; background:#07140f; border-radius:8px; position:relative; overflow:hidden; }
+    .screen span { position:absolute; inset:0; display:grid; place-items:center; color:var(--accent); font-size:4rem; }
+    .scan { position:absolute; inset:0; opacity:.3; background:repeating-linear-gradient(to bottom, transparent 0 2px, rgba(0,0,0,.35) 3px); }
+    .glow { position:absolute; inset:0; background:radial-gradient(circle at 50% 45%, rgba(61,255,166,.18), transparent 62%); }
+    .bezel { display:flex; justify-content:space-between; margin-top:8px; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted); }
+    .desk { height:16px; width:92%; margin:0 auto; border-radius:0 0 8px 8px; background:linear-gradient(var(--wood),var(--wood2)); }
+    .lede { position:relative; max-width:28rem; text-align:center; color:var(--muted); line-height:1.55; }
+    section.block { max-width:960px; margin:0 auto; padding:80px 20px; }
+    h2 { text-align:center; font-size:clamp(2rem,5vw,3rem); font-weight:520; margin:0 0 48px; }
+    article { display:grid; gap:28px; align-items:center; margin-bottom:72px; }
+    @media (min-width:800px) { article { grid-template-columns:1fr 1fr; } h2.about { text-align:left; } }
+    .card { aspect-ratio:5/4; border-radius:24px; background:var(--panel); display:grid; place-items:center; position:relative; overflow:hidden; }
+    .box { width:176px; height:144px; background:#171714; border-radius:12px; position:relative; }
+    .box i { position:absolute; inset:12px; border-radius:8px; background:#050505; }
+    .box b { position:absolute; left:12px; bottom:10px; font-size:12px; color:var(--muted); font-weight:500; }
+    .meta { color:var(--muted); font-size:14px; }
+    .blurb { color:var(--muted); line-height:1.55; max-width:28rem; }
+    .actions { display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+    .actions a { text-decoration:none; border-radius:999px; padding:8px 16px; font-size:14px; }
+    .solid { background:var(--fg); color:var(--bg); }
+    .ghost { border:1px solid var(--line); }
+    #about { max-width:40rem; }
+    #about h2 { text-align:left; }
+    #about p { color:var(--muted); line-height:1.6; }
+    .sheet { position:fixed; inset:0; background:rgba(5,5,5,.6); display:flex; justify-content:flex-end; z-index:9; }
+    .sheet aside { width:min(100%,360px); height:100%; background:var(--panel); border-left:1px solid var(--line); padding:32px; }
+    .copy { margin-top:24px; background:var(--accent); color:var(--bg); border-radius:999px; padding:8px 16px; font-weight:500; }
+    .cam, .tape { display:none; }
+    @media (min-width:700px) {
+      .cam, .tape { display:block; }
+      .cam { width:80px; height:96px; margin-bottom:24px; background:var(--panel); border-radius:8px; box-shadow:inset 0 0 0 1px var(--line); }
+      .tape { width:64px; margin-bottom:16px; }
+      .tape .body { height:96px; background:linear-gradient(#ddd,#a39c90); padding:4px; border-radius:2px; }
+      .tape .body div { height:100%; background:rgba(5,5,5,.8); }
+    }
+  </style>
+</head>
+<body>
+  <nav class="dock">
+    <a href="#hero">Home</a>
+    <a href="#works">Works</a>
+    <a href="#about">About me</a>
+    <button type="button" id="open">Contact</button>
+  </nav>
+  <header class="hero" id="hero">
+    <h1 class="display">Let’s make the desk move.</h1>
+    <div class="stage">
+      <div class="row">
+        <div class="cam"></div>
+        <div class="crt">
+          <div class="screen"><div class="glow"></div><div class="scan"></div><span class="display">DV</span></div>
+          <div class="bezel"><span>Desk 01</span><span>●</span></div>
+        </div>
+        <div class="tape"><div class="body"><div></div></div></div>
+      </div>
+      <div class="desk"></div>
+    </div>
+    <p class="lede">Dav builds web products, a canvas game, and a Python bot. One repo, then another, with a little more pulse.</p>
+  </header>
+  <section class="block" id="works">
+    <h2 class="display">Things I’ve put online</h2>
+    <article>
+      <div class="card" style="background:radial-gradient(circle at 50% 60%, rgba(255,176,72,.35), #10100e 55%)"><div class="box"><i></i><b class="display">Hollowpoint</b></div></div>
+      <div>
+        <h3 class="display" style="font-size:2rem;margin:0">Hollowpoint</h3>
+        <p class="meta">Web · 2026</p>
+        <p class="blurb">A browser project with its own stage, styles, and a Vercel config. The loudest thing on the shelf.</p>
+        <div class="actions"><a class="solid" href="https://github.com/davlovescode-tech/hollowpoint">Open it</a><a class="ghost" href="https://github.com/davlovescode-tech/hollowpoint">Source</a></div>
+      </div>
+    </article>
+    <article>
+      <div class="card" style="background:radial-gradient(circle at 50% 60%, rgba(90,220,255,.3), #10100e 55%)"><div class="box"><i></i><b class="display">Game</b></div></div>
+      <div>
+        <h3 class="display" style="font-size:2rem;margin:0">Game</h3>
+        <p class="meta">Canvas · 2026</p>
+        <p class="blurb">A JavaScript game: engine, world, and net code in one repo. Built to run in the browser.</p>
+        <div class="actions"><a class="solid" href="https://github.com/davlovescode-tech/game">Open it</a><a class="ghost" href="https://github.com/davlovescode-tech/game">Source</a></div>
+      </div>
+    </article>
+    <article>
+      <div class="card" style="background:radial-gradient(circle at 50% 60%, rgba(255,90,170,.3), #10100e 55%)"><div class="box"><i></i><b class="display">Ultron</b></div></div>
+      <div>
+        <h3 class="display" style="font-size:2rem;margin:0">Ultron</h3>
+        <p class="meta">Python · 2026</p>
+        <p class="blurb">A Python bot with a brain, cogs, and a small store.</p>
+        <div class="actions"><a class="solid" href="https://github.com/davlovescode-tech/ultron">Open it</a><a class="ghost" href="https://github.com/davlovescode-tech/ultron">Source</a></div>
+      </div>
+    </article>
+  </section>
+  <section class="block" id="about">
+    <h2 class="display about">About me</h2>
+    <p>I’m Dav — GitHub <a href="https://github.com/davlovescode-tech">davlovescode-tech</a>. Hollowpoint, Game, and Ultron are the three things on this desk. Jarvis is an empty shelf waiting for the next build.</p>
+  </section>
+  <div class="sheet" id="sheet" hidden>
+    <aside>
+      <h2 class="display">Contact</h2>
+      <p>Fastest path is GitHub.</p>
+      <p><a href="https://github.com/davlovescode-tech">github.com/davlovescode-tech</a></p>
+      <button class="copy" id="copy" type="button">Copy GitHub link</button>
+      <p><button type="button" id="close">Close</button></p>
+    </aside>
+  </div>
+  <script>
+    const sheet = document.getElementById("sheet");
+    document.getElementById("open").onclick = () => { sheet.hidden = false; };
+    document.getElementById("close").onclick = () => { sheet.hidden = true; };
+    sheet.onclick = (e) => { if (e.target === sheet) sheet.hidden = true; };
+    document.getElementById("copy").onclick = async () => {
+      await navigator.clipboard.writeText("https://github.com/davlovescode-tech");
+      document.getElementById("copy").textContent = "Copied";
+    };
+  </script>
+</body>
+</html>
